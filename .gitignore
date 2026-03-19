@@ -1,0 +1,6 @@
+CLAUDE.md
+.mcp.json
+.claude/
+__pycache__/
+.venv/
+.env
