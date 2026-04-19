@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.database import Base, engine
+from app.database import engine
 from app.routers import prices, products
 
 logging.basicConfig(level=logging.INFO)
@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting up — creating tables if not exist")
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+    logger.info("Starting up")
     yield
     logger.info("Shutting down")
     await engine.dispose()

@@ -3,4 +3,6 @@ CLAUDE.md
 .claude/
 __pycache__/
 .venv/
-.env
+.env*
+NOTES.md
+venv/
