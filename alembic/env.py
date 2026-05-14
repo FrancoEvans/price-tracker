@@ -9,9 +9,11 @@ from alembic import context
 # Si los modelos no se importan aquí, Base.metadata queda vacío y
 # --autogenerate genera una migración vacía (o peor, borra las tablas).
 # app/models/__init__.py está vacío, así que importamos cada módulo directamente.
-from app.database import Base
-import app.models.product  # noqa: F401 — registra Product en Base.metadata
-import app.models.price    # noqa: F401 — registra PriceRecord en Base.metadata
+from app.core.database import Base
+import app.products.models.product  # noqa: F401 — registra Product en Base.metadata
+import app.products.models.price    # noqa: F401 — registra PriceRecord en Base.metadata
+import app.users.models.user         # noqa: F401 — registra User en Base.metadata
+import app.users.models.user_product # noqa: F401 — registra UserProduct en Base.metadata
 
 config = context.config
 
