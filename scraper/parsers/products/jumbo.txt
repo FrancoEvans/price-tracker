@@ -1,0 +1,69 @@
+--- JSON-LD 0 --- {
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "@id": "https://portal.vtexcommercestable.com.br/cerveza-rubia-330ml-corona-2/p",
+  "name": "Cerveza Rubia 330ml Corona",
+  "brand": {
+    "@type": "Brand",
+    "name": "CORONA"
+  },
+  "image": [
+    "https://jumboargentina.vtexassets.com/arquivos/ids/890503/Cerveza-Rubia-330ml-Corona-1-23252.jpg?v=639140661868430000",
+    "https://jumboargentina.vtexassets.com/arquivos/ids/655317/Cerveza-Rubia-Corona-330-Ml-Porr-n-Descartable-2-23252.jpg?v=639140661868430000"
+  ],
+  "description": "Cerveza Rubia 330ml Corona",
+  "sku": "22487",
+  "category": "Bebidas",
+  "gtin": "7501064198847",
+  "offers": {
+    "@type": "AggregateOffer",
+    "lowPrice": 4131,
+    "highPrice": 4131,
+    "priceCurrency": "ARS",
+    "offers": [
+      {
+        "@type": "Offer",
+        "price": 2685.15,
+        "priceCurrency": "ARS",
+        "availability": "http://schema.org/InStock",
+        "sku": "22487",
+        "itemCondition": "http://schema.org/NewCondition",
+        "priceValidUntil": "2026-05-17",
+        "seller": {
+          "@type": "Organization",
+          "name": "Jumbo Argentina IO"
+        }
+      }
+    ],
+    "offerCount": 1
+  }
+}
+VM479:3 --- JSON-LD 1 --- {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Bebidas",
+      "item": "https://www.jumbo.com.ar/bebidas"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Cervezas",
+      "item": "https://www.jumbo.com.ar/bebidas/cervezas"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Cerveza Rubia 330ml Corona",
+      "item": "https://www.jumbo.com.ar/cerveza-rubia-330ml-corona-2/p"
+    }
+  ]
+}
+
+
+Jumbo (plataforma VTEX) inyecta dos bloques JSON-LD en el HTML:
+    - Uno con @type "Product" que incluye nombre, marca y precios
+    - Uno con @type "BreadcrumbList" (navegación, no lo usamos)

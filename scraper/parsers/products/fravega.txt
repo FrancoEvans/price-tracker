@@ -1,0 +1,18 @@
+Frávega está construido con Next.js + Apollo Client (GraphQL)
+    Next.js embebe todos los datos de la página en un tag especial:
+      <script id="__NEXT_DATA__" type="application/json">{ ...datos... }</script>
+
+    Dentro de ese JSON, Apollo guarda su cache en __APOLLO_STATE__.
+    Esa cache contiene el producto y su precio con nombres semánticos.
+
+
+__NEXT_DATA__
+        props.pageProps.__APOLLO_STATE__
+          ROOT_QUERY
+            sku({"code":"XXXXX"})           
+              pricing({"channel":"fravega-ecommerce"})
+                [0]
+                  salePrice  = 2999999     
+                  listPrice  = 4299999
+
+sku -> clave dinamica por producto
