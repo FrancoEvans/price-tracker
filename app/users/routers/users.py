@@ -16,6 +16,15 @@ logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/users", tags=["users"])
 
 
+@router.get("/by-telegram/{telegram_id}", response_model=UserRead)
+async def get_user_by_telegram(telegram_id: int, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.telegram_id == telegram_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user
+
+
 @router.post("/", response_model=UserRead, status_code=201)
 async def create_user(data: UserCreate, db: AsyncSession = Depends(get_db)):
     existing = await db.execute(

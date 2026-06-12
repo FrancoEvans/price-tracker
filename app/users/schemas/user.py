@@ -12,6 +12,7 @@ class UserRead(BaseModel):
     id: int
     username: str
     email: str
+    telegram_id: int | None = None
     created_at: datetime
 
     model_config = {"from_attributes": True}

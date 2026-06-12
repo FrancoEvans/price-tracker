@@ -24,7 +24,11 @@ class UserProduct(Base):
 
     user: Mapped[User] = relationship(back_populates="user_products")
     product: Mapped[Product] = relationship()
+    alerts: Mapped[list[Alert]] = relationship(
+        back_populates="user_product", cascade="all, delete-orphan"
+    )
 
 
 from app.users.models.user import User  # noqa: E402 — resolves circular import
 from app.products.models.product import Product  # noqa: E402
+from app.users.models.alert import Alert  # noqa: E402
