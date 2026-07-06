@@ -40,5 +40,29 @@ def parse_price(html: str) -> Decimal: # Para precios => Decimal
         raise KeyError(
             f"No se pudo extraer el precio de FRAVEGA: {e}\n"
         )
-    
+
     return Decimal(str(price_raw))
+
+
+def parse_name(html: str) -> str | None:
+    """Extrae el nombre del producto. Nunca lanza: devuelve None si no puede.
+
+    La clave exacta del nombre dentro de `sku` no está confirmada con HTML real
+    (fravega.txt solo documenta la estructura del precio) — se prueban varias
+    claves candidatas y se cae a None si ninguna existe.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    script_tag = soup.find("script", {"id": "__NEXT_DATA__"})
+    if not script_tag:
+        return None
+
+    try:
+        data = json.loads(script_tag.string)
+        apollo = data["props"]["pageProps"]["__APOLLO_STATE__"]
+        root = apollo["ROOT_QUERY"]
+        sku_key = next(k for k in root if k.startswith("sku("))
+        sku = root[sku_key]
+        return sku.get("name") or sku.get("title") or sku.get("productName")
+    except (KeyError, StopIteration, TypeError, json.JSONDecodeError):
+        return None

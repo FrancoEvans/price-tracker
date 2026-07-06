@@ -1,4 +1,6 @@
---- JSON-LD 0 --- {
+JSON-LD  => embebido en <script type="application/ld+json">
+
+{
   "@context": "https://schema.org/",
   "@type": "Product",
   "@id": "https://portal.vtexcommercestable.com.br/cerveza-rubia-330ml-corona-2/p",
@@ -67,3 +69,7 @@ VM479:3 --- JSON-LD 1 --- {
 Jumbo (plataforma VTEX) inyecta dos bloques JSON-LD en el HTML:
     - Uno con @type "Product" que incluye nombre, marca y precios
     - Uno con @type "BreadcrumbList" (navegación, no lo usamos)
+
+
+offers.lowPrice es el precio con impuestos incluidos — lo que muestra la UI.
+offers.offers[0].price es el precio sin impuestos nacionales (≈ 35% menos).

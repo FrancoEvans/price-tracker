@@ -30,6 +30,15 @@ PARSERS = {
     "jumbo.com.ar": jumbo.parse_price,
 }
 
+# igual que PARSERS pero para extraer el nombre real del producto (dict hermano,
+# no reemplaza a PARSERS para no arriesgar lo que ya funciona en produccion)
+NAME_PARSERS = {
+    "www.fravega.com": fravega.parse_name,
+    "fravega.com": fravega.parse_name,
+    "www.jumbo.com.ar": jumbo.parse_name,
+    "jumbo.com.ar": jumbo.parse_name,
+}
+
 # GET a la API para obtener los productos asociados a user_id
 async def get_products(client: httpx.AsyncClient, user_id: int) -> list[dict]:
     response = await client.get(f"{API_BASE}/users/{user_id}/products")
@@ -61,9 +70,14 @@ async def post_price(
     response.raise_for_status()
     return response.json()
 
+# actualiza el nombre real del producto (usado cuando todavia tiene el placeholder de /track)
+async def patch_product_name(client: httpx.AsyncClient, product_id: int, name: str) -> None:
+    response = await client.patch(f"{API_BASE}/products/{product_id}", json={"name": name})
+    response.raise_for_status()
+
 # scrapea el prodcuto y lo guarda en la API
 async def scrape_product(api_client: httpx.AsyncClient, product: dict) -> None:
-   
+
     url = product["url"]
     product_id = product["id"]
     name = product["name"]
@@ -71,7 +85,7 @@ async def scrape_product(api_client: httpx.AsyncClient, product: dict) -> None:
     # urlparse descompone una URL en sus partes
     # "https://www.fravega.com/p/notebook-xyz/" -> netloc = "www.fravega.com"
     domain = urlparse(url).netloc
-    
+
     # determina que PARSER usar
     parser = PARSERS.get(domain)
 
@@ -90,6 +104,15 @@ async def scrape_product(api_client: httpx.AsyncClient, product: dict) -> None:
         price = parser(html) # extrae el precio
         await post_price(api_client, product_id, price) # lo guarda en la API
         logger.info("OK id=%d '%s' -> %.2f ARS", product_id, name, price)
+
+        # si el nombre sigue siendo el placeholder que puso /track (url truncada), corregirlo
+        if name == url[:60]:
+            name_parser = NAME_PARSERS.get(domain)
+            if name_parser is not None:
+                real_name = name_parser(html)
+                if real_name:
+                    await patch_product_name(api_client, product_id, real_name)
+                    logger.info("Nombre actualizado id=%d -> '%s'", product_id, real_name)
 
     except Exception as e:
         # si un producto falla, sigue con los demas

@@ -30,3 +30,21 @@ def parse_price(html: str) -> Decimal:
     raise ValueError(
         "No se encontró JSON-LD con @type 'Product' en la página de Jumbo"
     )
+
+
+def parse_name(html: str) -> str | None:
+    """Extrae el nombre del producto. Nunca lanza: devuelve None si no puede."""
+    soup = BeautifulSoup(html, "html.parser")
+
+    for script_tag in soup.find_all("script", type="application/ld+json"):
+        try:
+            data = json.loads(script_tag.string)
+        except (json.JSONDecodeError, TypeError):
+            continue
+
+        if data.get("@type") != "Product":
+            continue
+
+        return data.get("name")
+
+    return None
