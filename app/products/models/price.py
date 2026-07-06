@@ -12,7 +12,7 @@ from app.core.database import Base
 class PriceRecord(Base):
     __tablename__ = "price_records"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     product_id: Mapped[int] = mapped_column(
         ForeignKey("products.id", ondelete="CASCADE"), nullable=False, index=True
     )
