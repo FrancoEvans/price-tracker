@@ -1,11 +1,12 @@
 import logging
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
 from app.products.models.product import Product
+from app.products.routers.products import _last_price
 from app.users.models.user import User
 from app.users.models.user_product import UserProduct
 from app.products.schemas.product import ProductRead
@@ -27,11 +28,12 @@ async def get_user_by_telegram(telegram_id: int, db: AsyncSession = Depends(get_
 
 @router.post("/", response_model=UserRead, status_code=201)
 async def create_user(data: UserCreate, db: AsyncSession = Depends(get_db)):
-    existing = await db.execute(
-        select(User).where((User.username == data.username) | (User.email == data.email))
-    )
+    conditions = [User.username == data.username, User.email == data.email]
+    if data.telegram_id is not None:
+        conditions.append(User.telegram_id == data.telegram_id)
+    existing = await db.execute(select(User).where(or_(*conditions)))
     if existing.scalar_one_or_none():
-        raise HTTPException(status_code=409, detail="Username or email already exists")
+        raise HTTPException(status_code=409, detail="Username, email or telegram_id already exists")
 
     user = User(**data.model_dump())
     db.add(user)
@@ -51,8 +53,15 @@ async def get_user_products(user_id: int, db: AsyncSession = Depends(get_db)):
         select(Product)
         .join(UserProduct, UserProduct.product_id == Product.id)
         .where(UserProduct.user_id == user_id)
+        .order_by(UserProduct.id)
     )
-    return result.scalars().all()
+    products = result.scalars().all()
+
+    output = []
+    for product in products:
+        last_price = await _last_price(product.id, db)
+        output.append(ProductRead.model_validate({**product.__dict__, "last_price": last_price}))
+    return output
 
 
 @router.post("/{user_id}/products", response_model=UserProductRead, status_code=201)

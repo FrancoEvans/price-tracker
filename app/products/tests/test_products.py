@@ -75,6 +75,26 @@ async def test_list_products_includes_last_price(client: AsyncClient):
     assert product["last_price"] == "999.99"
 
 
+async def test_list_products_filter_by_url_match(client: AsyncClient):
+    created = (
+        await client.post(
+            "/products/",
+            json={"name": "Filtrado", "url": "https://example.com/filtrado"},
+        )
+    ).json()
+    resp = await client.get("/products/", params={"url": "https://example.com/filtrado"})
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 1
+    assert data[0]["id"] == created["id"]
+
+
+async def test_list_products_filter_by_url_no_match(client: AsyncClient):
+    resp = await client.get("/products/", params={"url": "https://example.com/no-existe"})
+    assert resp.status_code == 200
+    assert resp.json() == []
+
+
 async def test_get_product_ok(client: AsyncClient):
     created = (
         await client.post(

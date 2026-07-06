@@ -60,6 +60,30 @@ stored there. The decorator passes it directly as an argument.
 
 ---
 
+## 3.5. Referencing "the user's Nth product" — never accept a raw `product_id`
+
+If the command lets the user pick one of *their own* products (like `/prices <n>`
+or `/alerta <n> ...`), the number the user types is a **position** in their own
+`/list`, not the real `product_id` in the database — real ids are global and
+shared across users (`user_products.user_id`/`product_id` is many-to-many).
+
+Always translate position → real id with the existing helper before calling any
+other API method:
+
+```python
+product_id = await resolve_product_id(api, user["id"], position)
+if product_id is None:
+    await update.effective_message.reply_text(f"No tenés un producto #{position}. Usá /list.")
+    return
+```
+
+`resolve_product_id` (in `bot/main.py`) calls `api.get_user_products(user_id)` —
+which is ordered by `user_products.id` server-side, so the position always
+matches what `/list` last showed — and indexes into it. Do not invent a second
+way to resolve "the Nth product"; reuse this helper.
+
+---
+
 ## 4. Write the handler (`bot/main.py`)
 
 Decide before writing:
