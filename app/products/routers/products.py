@@ -24,8 +24,11 @@ async def _last_price(product_id: int, db: AsyncSession) -> None:
 
 
 @router.get("/", response_model=list[ProductRead])
-async def list_products(db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(Product))
+async def list_products(url: str | None = None, db: AsyncSession = Depends(get_db)):
+    query = select(Product)
+    if url is not None:
+        query = query.where(Product.url == url)
+    result = await db.execute(query)
     products = result.scalars().all()
 
     output = []

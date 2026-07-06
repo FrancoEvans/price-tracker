@@ -14,6 +14,9 @@ anyio>=4.3.0
 # Scraper
 beautifulsoup4>=4.12.0
 
+# Telegram bot
+python-telegram-bot>=21.0.0
+
 # Migrations
 alembic>=1.13.0
 psycopg2-binary>=2.9.0

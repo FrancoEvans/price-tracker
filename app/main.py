@@ -5,7 +5,7 @@ from fastapi import FastAPI
 
 from app.core.database import engine
 from app.products.routers import prices, products
-from app.users.routers import users
+from app.users.routers import alerts, users
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -24,3 +24,4 @@ app = FastAPI(title="Price Tracker", lifespan=lifespan)
 app.include_router(products.router)
 app.include_router(prices.router)
 app.include_router(users.router)
+app.include_router(alerts.router)

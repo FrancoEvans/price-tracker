@@ -6,6 +6,7 @@ from pydantic import BaseModel, EmailStr
 class UserCreate(BaseModel):
     username: str
     email: EmailStr
+    telegram_id: int | None = None
 
 
 class UserRead(BaseModel):

@@ -14,6 +14,7 @@ import app.products.models.product  # noqa: F401 — registra Product en Base.me
 import app.products.models.price    # noqa: F401 — registra PriceRecord en Base.metadata
 import app.users.models.user         # noqa: F401 — registra User en Base.metadata
 import app.users.models.user_product # noqa: F401 — registra UserProduct en Base.metadata
+import app.users.models.alert        # noqa: F401 — registra Alert en Base.metadata
 
 config = context.config
 
